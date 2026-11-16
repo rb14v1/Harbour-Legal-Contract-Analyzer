@@ -133,6 +133,7 @@ resource "azurerm_storage_account" "blob" {
   location                 = "uksouth"
   account_tier             = "Standard"
   account_replication_type = "LRS"
+  min_tls_version          = "TLS1_2"
   public_network_access_enabled = false
 }
 
