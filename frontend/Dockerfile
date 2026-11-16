@@ -3,7 +3,9 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm install
 COPY . .
+RUN chown -R node:node /app
 EXPOSE 8080
+USER node
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
 
 FROM node:22-alpine AS build
