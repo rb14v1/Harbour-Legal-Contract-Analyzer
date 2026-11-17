@@ -1,4 +1,4 @@
-# Serves components: backend, frontend
+# Serves components: backend-api, web
 terraform {
   required_providers {
     azurerm = {
@@ -22,8 +22,8 @@ provider "azurerm" {
 
 resource "azurerm_postgresql_flexible_server" "postgresql" {
   tags = var.common_tags
-  name                   = "psql-harbour-legal-test-10"
-  resource_group_name    = "harbour-legal-test-10"
+  name                   = "psql-legal-contartct-test-15"
+  resource_group_name    = "legal-contartct-test-15"
   location               = "uksouth"
   version                = "16"
   sku_name               = "B_Standard_B1ms"
@@ -58,7 +58,7 @@ data "azurerm_private_dns_zone" "postgresql_dns_zone" {
 
 resource "azurerm_private_dns_zone_virtual_network_link" "postgresql_dns_zone_link" {
   tags = var.common_tags
-  name                  = "link-harbour-legal-test-10"
+  name                  = "link-legal-contartct-test-15"
   resource_group_name   = var.hub_resource_group
   private_dns_zone_name = data.azurerm_private_dns_zone.postgresql_dns_zone.name
   virtual_network_id    = var.vnet_id
@@ -66,8 +66,8 @@ resource "azurerm_private_dns_zone_virtual_network_link" "postgresql_dns_zone_li
 
 resource "azurerm_private_endpoint" "postgresql_pe" {
   tags = var.common_tags
-  name                = "pe-psql-harbour-legal-test-10"
-  resource_group_name = "harbour-legal-test-10"
+  name                = "pe-psql-legal-contartct-test-15"
+  resource_group_name = "legal-contartct-test-15"
   location            = "uksouth"
   subnet_id           = var.subnet_id
 
@@ -86,8 +86,8 @@ resource "azurerm_private_endpoint" "postgresql_pe" {
 
 resource "azurerm_search_service" "search" {
   tags = var.common_tags
-  name                = "search-harbour-legal-test-10"
-  resource_group_name = "harbour-legal-test-10"
+  name                = "search-legal-contartct-test-15"
+  resource_group_name = "legal-contartct-test-15"
   location            = "uksouth"
   sku                 = "basic"
   public_network_access_enabled = false
@@ -100,7 +100,7 @@ data "azurerm_private_dns_zone" "search_dns_zone" {
 
 resource "azurerm_private_dns_zone_virtual_network_link" "search_dns_zone_link" {
   tags = var.common_tags
-  name                  = "link-harbour-legal-test-10"
+  name                  = "link-legal-contartct-test-15"
   resource_group_name   = var.hub_resource_group
   private_dns_zone_name = data.azurerm_private_dns_zone.search_dns_zone.name
   virtual_network_id    = var.vnet_id
@@ -108,8 +108,8 @@ resource "azurerm_private_dns_zone_virtual_network_link" "search_dns_zone_link" 
 
 resource "azurerm_private_endpoint" "search_pe" {
   tags = var.common_tags
-  name                = "pe-search-harbour-legal-test-10"
-  resource_group_name = "harbour-legal-test-10"
+  name                = "pe-search-legal-contartct-test-15"
+  resource_group_name = "legal-contartct-test-15"
   location            = "uksouth"
   subnet_id           = var.subnet_id
 
@@ -128,13 +128,21 @@ resource "azurerm_private_endpoint" "search_pe" {
 
 resource "azurerm_storage_account" "blob" {
   tags = var.common_tags
-  name                     = "stharbourlegaltest10"
-  resource_group_name      = "harbour-legal-test-10"
+  name                     = "stlegalcontartcttest15"
+  resource_group_name      = "legal-contartct-test-15"
   location                 = "uksouth"
   account_tier             = "Standard"
   account_replication_type = "LRS"
   public_network_access_enabled = false
-  min_tls_version          = "TLS1_2"
+  # Azure Policy "Storage account public access should be disallowed" denies the create outright without this,
+  # and the two settings are not the same thing: public_network_access_enabled above closes the network path,
+  # while this controls whether individual blobs may be marked public. The azurerm provider defaults it to true,
+  # so omitting it is an active choice to allow public blobs, which the policy refuses.
+  #
+  # Regression: harbour-legal-test-10. The apply created Postgres, AI Search and both private endpoints, then
+  # died on this with RequestDisallowedByPolicy / Forbidden: "Please ensure that Blob Public Access is blocked
+  # before creating your storage account." Every app needing Blob Storage failed the same way.
+  allow_nested_items_to_be_public = false
 }
 
 data "azurerm_private_dns_zone" "blob_dns_zone" {
@@ -144,7 +152,7 @@ data "azurerm_private_dns_zone" "blob_dns_zone" {
 
 resource "azurerm_private_dns_zone_virtual_network_link" "blob_dns_zone_link" {
   tags = var.common_tags
-  name                  = "link-harbour-legal-test-10"
+  name                  = "link-legal-contartct-test-15"
   resource_group_name   = var.hub_resource_group
   private_dns_zone_name = data.azurerm_private_dns_zone.blob_dns_zone.name
   virtual_network_id    = var.vnet_id
@@ -152,8 +160,8 @@ resource "azurerm_private_dns_zone_virtual_network_link" "blob_dns_zone_link" {
 
 resource "azurerm_private_endpoint" "blob_pe" {
   tags = var.common_tags
-  name                = "pe-blob-harbour-legal-test-10"
-  resource_group_name = "harbour-legal-test-10"
+  name                = "pe-blob-legal-contartct-test-15"
+  resource_group_name = "legal-contartct-test-15"
   location            = "uksouth"
   subnet_id           = var.subnet_id
 
