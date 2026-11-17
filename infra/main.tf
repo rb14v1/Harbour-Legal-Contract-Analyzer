@@ -1,4 +1,4 @@
-# Serves components: backend-api, web
+# Serves components: backend, frontend
 terraform {
   required_providers {
     azurerm = {
@@ -22,8 +22,8 @@ provider "azurerm" {
 
 resource "azurerm_postgresql_flexible_server" "postgresql" {
   tags = var.common_tags
-  name                   = "psql-harbour-legal"
-  resource_group_name    = "harbour-legal-"
+  name                   = "psql-harbour-legal-test-10"
+  resource_group_name    = "harbour-legal-test-10"
   location               = "uksouth"
   version                = "16"
   sku_name               = "B_Standard_B1ms"
@@ -58,7 +58,7 @@ data "azurerm_private_dns_zone" "postgresql_dns_zone" {
 
 resource "azurerm_private_dns_zone_virtual_network_link" "postgresql_dns_zone_link" {
   tags = var.common_tags
-  name                  = "link-harbour-legal"
+  name                  = "link-harbour-legal-test-10"
   resource_group_name   = var.hub_resource_group
   private_dns_zone_name = data.azurerm_private_dns_zone.postgresql_dns_zone.name
   virtual_network_id    = var.vnet_id
@@ -66,8 +66,8 @@ resource "azurerm_private_dns_zone_virtual_network_link" "postgresql_dns_zone_li
 
 resource "azurerm_private_endpoint" "postgresql_pe" {
   tags = var.common_tags
-  name                = "pe-psql-harbour-legal"
-  resource_group_name = "harbour-legal-"
+  name                = "pe-psql-harbour-legal-test-10"
+  resource_group_name = "harbour-legal-test-10"
   location            = "uksouth"
   subnet_id           = var.subnet_id
 
@@ -86,8 +86,8 @@ resource "azurerm_private_endpoint" "postgresql_pe" {
 
 resource "azurerm_search_service" "search" {
   tags = var.common_tags
-  name                = "search-harbour-legal"
-  resource_group_name = "harbour-legal-"
+  name                = "search-harbour-legal-test-10"
+  resource_group_name = "harbour-legal-test-10"
   location            = "uksouth"
   sku                 = "basic"
   public_network_access_enabled = false
@@ -100,7 +100,7 @@ data "azurerm_private_dns_zone" "search_dns_zone" {
 
 resource "azurerm_private_dns_zone_virtual_network_link" "search_dns_zone_link" {
   tags = var.common_tags
-  name                  = "link-harbour-legal"
+  name                  = "link-harbour-legal-test-10"
   resource_group_name   = var.hub_resource_group
   private_dns_zone_name = data.azurerm_private_dns_zone.search_dns_zone.name
   virtual_network_id    = var.vnet_id
@@ -108,8 +108,8 @@ resource "azurerm_private_dns_zone_virtual_network_link" "search_dns_zone_link" 
 
 resource "azurerm_private_endpoint" "search_pe" {
   tags = var.common_tags
-  name                = "pe-search-harbour-legal"
-  resource_group_name = "harbour-legal-"
+  name                = "pe-search-harbour-legal-test-10"
+  resource_group_name = "harbour-legal-test-10"
   location            = "uksouth"
   subnet_id           = var.subnet_id
 
@@ -128,12 +128,11 @@ resource "azurerm_private_endpoint" "search_pe" {
 
 resource "azurerm_storage_account" "blob" {
   tags = var.common_tags
-  name                     = "stharbourlegal"
-  resource_group_name      = "harbour-legal-"
+  name                     = "stharbourlegaltest10"
+  resource_group_name      = "harbour-legal-test-10"
   location                 = "uksouth"
   account_tier             = "Standard"
   account_replication_type = "LRS"
-  min_tls_version          = "TLS1_2"
   public_network_access_enabled = false
 }
 
@@ -144,7 +143,7 @@ data "azurerm_private_dns_zone" "blob_dns_zone" {
 
 resource "azurerm_private_dns_zone_virtual_network_link" "blob_dns_zone_link" {
   tags = var.common_tags
-  name                  = "link-harbour-legal"
+  name                  = "link-harbour-legal-test-10"
   resource_group_name   = var.hub_resource_group
   private_dns_zone_name = data.azurerm_private_dns_zone.blob_dns_zone.name
   virtual_network_id    = var.vnet_id
@@ -152,8 +151,8 @@ resource "azurerm_private_dns_zone_virtual_network_link" "blob_dns_zone_link" {
 
 resource "azurerm_private_endpoint" "blob_pe" {
   tags = var.common_tags
-  name                = "pe-blob-harbour-legal"
-  resource_group_name = "harbour-legal-"
+  name                = "pe-blob-harbour-legal-test-10"
+  resource_group_name = "harbour-legal-test-10"
   location            = "uksouth"
   subnet_id           = var.subnet_id
 
