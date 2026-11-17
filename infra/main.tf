@@ -134,6 +134,7 @@ resource "azurerm_storage_account" "blob" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
   public_network_access_enabled = false
+  min_tls_version          = "TLS1_2"
 }
 
 data "azurerm_private_dns_zone" "blob_dns_zone" {
