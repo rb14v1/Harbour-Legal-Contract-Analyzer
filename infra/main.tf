@@ -143,6 +143,7 @@ resource "azurerm_storage_account" "blob" {
   # died on this with RequestDisallowedByPolicy / Forbidden: "Please ensure that Blob Public Access is blocked
   # before creating your storage account." Every app needing Blob Storage failed the same way.
   allow_nested_items_to_be_public = false
+  min_tls_version                 = "TLS1_2"
 }
 
 data "azurerm_private_dns_zone" "blob_dns_zone" {
