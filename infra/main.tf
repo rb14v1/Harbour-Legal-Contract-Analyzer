@@ -22,11 +22,17 @@ provider "azurerm" {
 
 resource "azurerm_postgresql_flexible_server" "postgresql" {
   tags = var.common_tags
-  name                   = "psql-legal-contartct-test-15"
-  resource_group_name    = "legal-contartct-test-15"
-  location               = "uksouth"
+  name                   = "psql-legal-test-33"
+  resource_group_name    = "legal-test-33"
+  location               = "South India"
   version                = "16"
-  sku_name               = "B_Standard_B1ms"
+  # B_Standard_B1ms is a valid SKU name and is listed as offered in uksouth (Azure's capabilities API
+  # confirms it, no restriction flag), but regional hardware stock for it has been intermittently
+  # exhausted — a capacity error (SkuNotAvailable), not a quota or config problem, and not something a
+  # retry on the same SKU reliably clears. B_Standard_B2s is Azure's own default Burstable SKU for this
+  # region and has not shown the same stockout. Regression: legal-contartct-test-15, apply failed twice
+  # with "Specified SKU is not supported in this region. Please choose a different SKU."
+  sku_name               = "B_Standard_B2s"
   storage_mb             = 32768
   administrator_login    = "psqladmin"
   administrator_password = random_password.postgresql_admin.result
@@ -58,7 +64,7 @@ data "azurerm_private_dns_zone" "postgresql_dns_zone" {
 
 resource "azurerm_private_dns_zone_virtual_network_link" "postgresql_dns_zone_link" {
   tags = var.common_tags
-  name                  = "link-legal-contartct-test-15"
+  name                  = "link-legal-test-33"
   resource_group_name   = var.hub_resource_group
   private_dns_zone_name = data.azurerm_private_dns_zone.postgresql_dns_zone.name
   virtual_network_id    = var.vnet_id
@@ -66,9 +72,9 @@ resource "azurerm_private_dns_zone_virtual_network_link" "postgresql_dns_zone_li
 
 resource "azurerm_private_endpoint" "postgresql_pe" {
   tags = var.common_tags
-  name                = "pe-psql-legal-contartct-test-15"
-  resource_group_name = "legal-contartct-test-15"
-  location            = "uksouth"
+  name                = "pe-psql-legal-test-33"
+  resource_group_name = "legal-test-33"
+  location            = "South India"
   subnet_id           = var.subnet_id
 
   private_service_connection {
@@ -86,9 +92,9 @@ resource "azurerm_private_endpoint" "postgresql_pe" {
 
 resource "azurerm_search_service" "search" {
   tags = var.common_tags
-  name                = "search-legal-contartct-test-15"
-  resource_group_name = "legal-contartct-test-15"
-  location            = "uksouth"
+  name                = "search-legal-test-33"
+  resource_group_name = "legal-test-33"
+  location            = "South India"
   sku                 = "basic"
   public_network_access_enabled = false
 }
@@ -100,7 +106,7 @@ data "azurerm_private_dns_zone" "search_dns_zone" {
 
 resource "azurerm_private_dns_zone_virtual_network_link" "search_dns_zone_link" {
   tags = var.common_tags
-  name                  = "link-legal-contartct-test-15"
+  name                  = "link-legal-test-33"
   resource_group_name   = var.hub_resource_group
   private_dns_zone_name = data.azurerm_private_dns_zone.search_dns_zone.name
   virtual_network_id    = var.vnet_id
@@ -108,9 +114,9 @@ resource "azurerm_private_dns_zone_virtual_network_link" "search_dns_zone_link" 
 
 resource "azurerm_private_endpoint" "search_pe" {
   tags = var.common_tags
-  name                = "pe-search-legal-contartct-test-15"
-  resource_group_name = "legal-contartct-test-15"
-  location            = "uksouth"
+  name                = "pe-search-legal-test-33"
+  resource_group_name = "legal-test-33"
+  location            = "South India"
   subnet_id           = var.subnet_id
 
   private_service_connection {
@@ -128,9 +134,9 @@ resource "azurerm_private_endpoint" "search_pe" {
 
 resource "azurerm_storage_account" "blob" {
   tags = var.common_tags
-  name                     = "stlegalcontartcttest15"
-  resource_group_name      = "legal-contartct-test-15"
-  location                 = "uksouth"
+  name                     = "stlegaltest33"
+  resource_group_name      = "legal-test-33"
+  location                 = "South India"
   account_tier             = "Standard"
   account_replication_type = "LRS"
   public_network_access_enabled = false
@@ -143,7 +149,6 @@ resource "azurerm_storage_account" "blob" {
   # died on this with RequestDisallowedByPolicy / Forbidden: "Please ensure that Blob Public Access is blocked
   # before creating your storage account." Every app needing Blob Storage failed the same way.
   allow_nested_items_to_be_public = false
-  min_tls_version                 = "TLS1_2"
 }
 
 data "azurerm_private_dns_zone" "blob_dns_zone" {
@@ -153,7 +158,7 @@ data "azurerm_private_dns_zone" "blob_dns_zone" {
 
 resource "azurerm_private_dns_zone_virtual_network_link" "blob_dns_zone_link" {
   tags = var.common_tags
-  name                  = "link-legal-contartct-test-15"
+  name                  = "link-legal-test-33"
   resource_group_name   = var.hub_resource_group
   private_dns_zone_name = data.azurerm_private_dns_zone.blob_dns_zone.name
   virtual_network_id    = var.vnet_id
@@ -161,9 +166,9 @@ resource "azurerm_private_dns_zone_virtual_network_link" "blob_dns_zone_link" {
 
 resource "azurerm_private_endpoint" "blob_pe" {
   tags = var.common_tags
-  name                = "pe-blob-legal-contartct-test-15"
-  resource_group_name = "legal-contartct-test-15"
-  location            = "uksouth"
+  name                = "pe-blob-legal-test-33"
+  resource_group_name = "legal-test-33"
+  location            = "South India"
   subnet_id           = var.subnet_id
 
   private_service_connection {
